@@ -2,4 +2,4 @@
 /.vscode/
 /souse/.env
 ../.idea/
-__pycache__/
+../__pycache__/
