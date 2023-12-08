@@ -6,7 +6,7 @@ import sys
 import aiohttp
 
 import settings
-from db.session import update_data
+from db.core import update_data
 
 sys.path.insert(1, os.path.join(sys.path[0], ''))
 

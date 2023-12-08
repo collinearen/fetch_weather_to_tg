@@ -3,3 +3,4 @@
 /souse/.env
 ../.idea/
 ../__pycache__/
+/telegram_weather/bot.log
