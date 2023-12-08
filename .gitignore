@@ -1,0 +1,5 @@
+/venv/
+/.vscode/
+/souse/.env
+../.idea/
+__pycache__/

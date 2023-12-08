@@ -1,10 +1,13 @@
-from sqlalchemy import create_engine, insert
+import datetime
 
-from models import metadata, weather
+from sqlalchemy import create_engine, insert, update
+
+import settings
+from .models import metadata, weather
 
 engine = create_engine(
     url="postgresql+psycopg2://postgres:0000@0.0.0.0:5432/weather",
-    echo=True,
+    echo=False,
 )
 
 
@@ -16,11 +19,25 @@ def drop_table():
     weather.drop(engine)
 
 
-def update_data(town: str, temp: str, timestamp: str):
-    pass
+def data_fill():
+    for key, values in settings.COORD.items():
+        insert_data(town=key, timestamp=datetime.datetime.now(), temp=0)
 
 
-def insert_data(town: str, temp: str, timestamp: str):
+def update_data(town: str, temp: int, timestamp):
+    with engine.connect() as conn:
+        query = update(weather).where(weather.c.town == town).values(
+            {
+                weather.c.temp: temp,
+                weather.c.time_stamp: timestamp
+            }
+        )
+        conn.execute(query)
+        conn.commit()
+        conn.close()
+
+
+def insert_data(town: str, temp: int, timestamp):
     with engine.connect() as conn:
         query = insert(weather).values(
             [
@@ -35,4 +52,6 @@ def insert_data(town: str, temp: str, timestamp: str):
 
 
 if __name__ == '__main__':
-    insert_data("Смоленск","f", "ffs")
+    drop_table()
+    create_table()
+    data_fill()
