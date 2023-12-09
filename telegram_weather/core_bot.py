@@ -111,6 +111,7 @@ async def select_time(message: types.Message, state: FSMContext):
         f'Теперь я буду присылать в {time} каждый день какая погода тебя ждет на улице')
 
 
+@aiocron.crontab('* * * * *')
 async def send_weather():
     users = get_users_for_sending()  # Получите список пользователей из базы данных
     for user in users:
@@ -121,11 +122,6 @@ async def send_weather():
         # Получите данные о погоде для каждого пользователя
         await bot.send_message(user_id, f"Погода в {data[1]}е сейчас "
                                         f"{data[0]}℃")
-
-
-@aiocron.crontab('* * * * *')
-async def scheduled_message():
-    await send_weather()
 
 
 async def main():
