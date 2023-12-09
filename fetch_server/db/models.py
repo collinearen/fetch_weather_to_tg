@@ -1,20 +1,30 @@
 import datetime
 
-from sqlalchemy import Column, Integer, String, MetaData, Table, DateTime, ForeignKey
+from sqlalchemy import DateTime, create_engine
+from sqlalchemy.orm import sessionmaker, DeclarativeBase, Mapped, mapped_column
 
-metadata = MetaData()
+engine = create_engine(
+    url="postgresql+psycopg2://postgres:0000@0.0.0.0:5432/weather",
+    echo=False,
+)
+session_engine = sessionmaker(engine)
 
-weather = Table("weather",
-                metadata,
-                Column("id", Integer, primary_key=True, nullable=False),
-                Column("town", String, nullable=False),
-                Column("temp", Integer, default=0),
-                Column("time_stamp", DateTime(timezone=True), onupdate=datetime.datetime.now()),
-                )
 
-users = Table("users", metadata,
-              Column("id", Integer, primary_key=True),
-              Column("user_id", Integer),
-              Column("town", String),
-              Column("time_sending", String),
-              )
+class Base(DeclarativeBase):
+    pass
+
+
+class Weather(Base):
+    __tablename__ = "weather"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    town: Mapped[str] = mapped_column(nullable=False)
+    temp: Mapped[int] = mapped_column(default=0)
+    time_stamp: Mapped[DateTime] = mapped_column(timezone=True, onupdate=datetime.datetime.now())
+
+
+class User(Base):
+    __tablename__ = "users"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int]
+    town: Mapped[str] = mapped_column(nullable=False)
+    time_sending: Mapped[str]

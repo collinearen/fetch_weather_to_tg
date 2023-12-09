@@ -3,8 +3,7 @@ import sys
 
 from sqlalchemy import create_engine, insert, update, select
 
-import settings
-
+from models import weather, users
 
 sys.path.insert(1, os.path.join(sys.path[0], ''))
 
@@ -96,7 +95,7 @@ def get_users_for_sending():
 
 def find_user(user_id: int):
     with engine.connect() as conn:
-        query = select(users).filter(users.c.user_id == user_id).scalar()
+        query = select(users).filter(users.c.user_id == user_id)
         res = conn.execute(query)
         conn.close()
     return res.fetchone()
