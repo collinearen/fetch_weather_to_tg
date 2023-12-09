@@ -1,7 +1,16 @@
 import subprocess
 from time import sleep
 
-if __name__ == '__main__':
+import settings
+
+
+def main():
+    sleep_time = 3600
+
     while True:
-        subprocess.run(['python', "/Users/ya/Desktop/all/projects/dockertraining/fetch_server/collector.py"])
-        sleep(10)
+        subprocess.run(['python', settings.MAIN_PATH])
+        sleep(sleep_time)
+
+
+if __name__ == '__main__':
+    main()

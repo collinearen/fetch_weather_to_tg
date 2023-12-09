@@ -19,3 +19,5 @@ COORD = {
 }
 
 TOKEN = os.environ.get("TOKEN")
+
+MAIN_PATH = os.environ.get("MAIN_PATH")

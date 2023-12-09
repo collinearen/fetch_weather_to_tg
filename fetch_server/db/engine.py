@@ -1,9 +1,12 @@
-import datetime
+import os
+import sys
 
 from sqlalchemy import create_engine, insert, update, select
 
 import settings
-from .models import metadata, weather, users
+
+
+sys.path.insert(1, os.path.join(sys.path[0], ''))
 
 engine = create_engine(
     url="postgresql+psycopg2://postgres:0000@0.0.0.0:5432/weather",
@@ -11,22 +14,10 @@ engine = create_engine(
 )
 
 
-def create_table():
-    metadata.create_all(engine)
-
-
-def drop_tables():
-    weather.drop(engine)
-    users.drop(engine)
-
-
 #           <----    WEATHER FUNCTIONS   ---->
-def data_fill():
-    for key, values in settings.COORD.items():
-        insert_data(town=key, timestamp=datetime.datetime.now(), temp=0)
 
 
-def update_data(town: str, temp: int, timestamp):
+def update_temp(town: str, temp: int, timestamp):
     with engine.connect() as conn:
         query = update(weather).where(weather.c.town == town).values(
             {
@@ -39,32 +30,7 @@ def update_data(town: str, temp: int, timestamp):
         conn.close()
 
 
-def insert_data(town: str, temp: int, timestamp):
-    with engine.connect() as conn:
-        query = insert(weather).values(
-            [
-                {"town": town,
-                 "temp": temp,
-                 "time_stamp": timestamp}
-            ]
-        )
-        conn.execute(query)
-        conn.commit()
-        conn.close()
-
-
 #           <----   USER FUNCTIONS  ---->
-
-def find_user(user_id: int):
-    with engine.connect() as conn:
-        query = select(users).where(users.c.user_id == user_id)
-        try:
-            conn.execute(query)
-            return 200
-        except UserWarning:
-            return None
-        finally:
-            conn.close()
 
 
 def create_user(user_id: int):
@@ -109,31 +75,32 @@ def update_time_for_user(user_id: int, time: str):
 
 def show_temperature(user_id: int):
     with engine.connect() as conn:
-        try:
-            query = select(users).where(users.c.user_id == user_id)
-            town_user = conn.execute(query)
-            town = town_user.fetchone()[2]
+        query = select(users).where(users.c.user_id == user_id)
+        town_user = conn.execute(query)
+        town = town_user.fetchone()[2]
 
-            query = select(weather).where(weather.c.town == town)
-            response = conn.execute(query)
-            temp = response.fetchone()[2]
-            return temp, town
-        finally:
-            conn.close()
+        query = select(weather).where(weather.c.town == town)
+        response = conn.execute(query)
+        temp = response.fetchone()[2]
+        conn.close()
+        return temp, town
 
 
 def get_users_for_sending():
     with engine.connect() as conn:
-        query = select(users).where(users.c.time_sending == "14:14")
+        query = select(users).where(users.c.time_sending == "15:00")
         res = conn.execute(query)
-        return res.fetchall()
+        conn.close()
+    return res.fetchall()
 
 
-def start():
-    drop_tables()
-    create_table()
-    data_fill()
+def find_user(user_id: int):
+    with engine.connect() as conn:
+        query = select(users).filter(users.c.user_id == user_id).scalar()
+        res = conn.execute(query)
+        conn.close()
+    return res.fetchone()
 
 
 if __name__ == '__main__':
-    start()
+    print(find_user(1064946340))
