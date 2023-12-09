@@ -1,21 +1,28 @@
+import asyncio
 import datetime
 
 import settings
-from models import Weather, session_engine
+from models import Weather, session_engine, Base, engine
 
-def data_fill():
+
+async def create_tables():
+    await Base.metadata.drop_all(engine)
+
+
+async def data_fill():
     for key, values in settings.COORD.items():
-        insert_data(town=key, timestamp=datetime.datetime.now(), temp=0)
+        await insert_data(town=key, temp=0, time_stamp=datetime.datetime.now(), )
 
 
-def insert_data(town: str, temp: int, timestamp):
-    with session_engine() as session:
-        weather = Weather(town=town, temp=temp, timestamp=timestamp)
+async def insert_data(town: str, temp: int):
+    async with session_engine() as session:
+        weather = Weather(town=town, temp=temp)
         session.add(weather)
-        session.commit()
+        await session.commit()
 
 
-
+if __name__ == '__main__':
+    asyncio.run(create_tables())
     # with engine.connect() as conn:
     #     query = insert(weather).values(
     #         [

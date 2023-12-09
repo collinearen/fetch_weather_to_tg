@@ -1,30 +1,35 @@
 import datetime
+from typing import Annotated
 
-from sqlalchemy import DateTime, create_engine
-from sqlalchemy.orm import sessionmaker, DeclarativeBase, Mapped, mapped_column
+from sqlalchemy import ForeignKey, text
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+from sqlalchemy.orm import declarative_base, Mapped, mapped_column
 
-engine = create_engine(
-    url="postgresql+psycopg2://postgres:0000@0.0.0.0:5432/weather",
+engine = create_async_engine(
+    url="postgresql+asyncpg://postgres:0000@0.0.0.0:5432/weather",
     echo=False,
 )
-session_engine = sessionmaker(engine)
+session_engine = async_sessionmaker(engine)
 
+Base = declarative_base()
 
-class Base(DeclarativeBase):
-    pass
+intpk = Annotated[int, mapped_column(primary_key=True)]
 
 
 class Weather(Base):
     __tablename__ = "weather"
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[intpk]
     town: Mapped[str] = mapped_column(nullable=False)
     temp: Mapped[int] = mapped_column(default=0)
-    time_stamp: Mapped[DateTime] = mapped_column(timezone=True, onupdate=datetime.datetime.now())
+    time_stamp: Mapped[datetime.datetime] = mapped_column(
+        server_default=text("TIMEZONE('utc', now)",
+                            ),
+        onupdate=datetime.datetime.now())
 
 
 class User(Base):
     __tablename__ = "users"
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[intpk]
     user_id: Mapped[int]
-    town: Mapped[str] = mapped_column(nullable=False)
+    town: Mapped[str] = mapped_column(ForeignKey("weather.temp"))
     time_sending: Mapped[str]
