@@ -15,6 +15,6 @@ weather = Table("weather",
 users = Table("users", metadata,
               Column("id", Integer, primary_key=True),
               Column("user_id", Integer),
-              Column("town", String, ForeignKey('weather.town')),
+              Column("town", String),
               Column("time_sending", String),
               )

@@ -3,7 +3,7 @@ import datetime
 from sqlalchemy import create_engine, insert, update, select
 
 import settings
-from models import metadata, weather, users
+from .models import metadata, weather, users
 
 engine = create_engine(
     url="postgresql+psycopg2://postgres:0000@0.0.0.0:5432/weather",
@@ -107,13 +107,33 @@ def update_time_for_user(user_id: int, time: str):
         conn.close()
 
 
-def show_weather_on_user(user_id: int):
+def show_temperature(user_id: int):
     with engine.connect() as conn:
-        query = select(users).where(users.c.user_id == user_id)
+        try:
+            query = select(users).where(users.c.user_id == user_id)
+            town_user = conn.execute(query)
+            town = town_user.fetchone()[2]
 
-        query = select()
+            query = select(weather).where(weather.c.town == town)
+            response = conn.execute(query)
+            temp = response.fetchone()[2]
+            return temp, town
+        finally:
+            conn.close()
 
+
+def get_users_for_sending():
+    with engine.connect() as conn:
+        query = select(users).where(users.c.time_sending == "14:14")
+        res = conn.execute(query)
+        return res.fetchall()
+
+
+def start():
+    drop_tables()
+    create_table()
+    data_fill()
 
 
 if __name__ == '__main__':
-    print(show_weather_on_user(1064946340))
+    start()

@@ -3,5 +3,5 @@ from time import sleep
 
 if __name__ == '__main__':
     while True:
-        subprocess.run(['python', "/Users/ya/Desktop/all/projects/dockertraining/souse/collector.py"])
+        subprocess.run(['python', "/Users/ya/Desktop/all/projects/dockertraining/fetch_server/collector.py"])
         sleep(10)
