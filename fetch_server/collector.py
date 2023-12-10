@@ -6,7 +6,7 @@ import sys
 import aiohttp
 
 import settings
-from db.engine import update_temp
+from db.weather_dao import update_data
 
 sys.path.insert(1, os.path.join(sys.path[0], ''))
 
@@ -18,9 +18,9 @@ async def request(url, town):
     dct = res['data']['current_condition'][0]
     data = (dct['temp_C'],
             datetime.datetime.now())
-    update_temp(town=town,
-                temp=int(data[0]),
-                timestamp=data[1])
+
+    await update_data(town=town,
+                      temp=int(data[0]))
     return data
 
 

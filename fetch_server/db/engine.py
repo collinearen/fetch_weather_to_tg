@@ -3,30 +3,12 @@ import sys
 
 from sqlalchemy import create_engine, insert, update, select
 
-from models import weather, users
-
 sys.path.insert(1, os.path.join(sys.path[0], ''))
 
 engine = create_engine(
     url="postgresql+psycopg2://postgres:0000@0.0.0.0:5432/weather",
     echo=False,
 )
-
-
-#           <----    WEATHER FUNCTIONS   ---->
-
-
-def update_temp(town: str, temp: int, timestamp):
-    with engine.connect() as conn:
-        query = update(weather).where(weather.c.town == town).values(
-            {
-                weather.c.temp: temp,
-                weather.c.time_stamp: timestamp
-            }
-        )
-        conn.execute(query)
-        conn.commit()
-        conn.close()
 
 
 #           <----   USER FUNCTIONS  ---->
