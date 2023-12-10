@@ -1,17 +1,4 @@
-import os
-import sys
-
-from sqlalchemy import create_engine, insert, update, select
-
-sys.path.insert(1, os.path.join(sys.path[0], ''))
-
-engine = create_engine(
-    url="postgresql+psycopg2://postgres:0000@0.0.0.0:5432/weather",
-    echo=False,
-)
-
-
-#           <----   USER FUNCTIONS  ---->
+from sqlalchemy import insert, update, select
 
 
 def create_user(user_id: int):
@@ -81,7 +68,3 @@ def find_user(user_id: int):
         res = conn.execute(query)
         conn.close()
     return res.fetchone()
-
-
-if __name__ == '__main__':
-    print(find_user(1064946340))

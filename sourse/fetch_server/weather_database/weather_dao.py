@@ -1,21 +1,10 @@
-import asyncio
 import datetime
 
 from sqlalchemy import update
 
 import settings
-from .models import Weather, async_session, Base, engine
-
-
-async def init_models():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
-        await conn.run_sync(Base.metadata.create_all)
-
-
-async def data_fill():
-    for key, values in settings.COORD.items():
-        await insert_data(town=key, temp=0, time_stamp=datetime.datetime.now())
+from .models import Weather
+from .session import async_session
 
 
 async def insert_data(town: str, temp: int, time_stamp):
@@ -37,10 +26,6 @@ async def update_data(town: str, temp: int):
         await session.commit()
 
 
-async def init() -> None:
-    await init_models()
-    await data_fill()
-
-
-if __name__ == '__main__':
-    asyncio.run(init())
+async def data_fill():
+    for key, values in settings.COORD.items():
+        await insert_data(town=key, temp=0, time_stamp=datetime.datetime.now())

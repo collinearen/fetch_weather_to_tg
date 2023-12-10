@@ -6,7 +6,7 @@ import sys
 import aiohttp
 
 import settings
-from db.weather_dao import update_data
+from weather_database.weather_dao import update_data
 
 sys.path.insert(1, os.path.join(sys.path[0], ''))
 
