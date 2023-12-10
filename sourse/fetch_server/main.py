@@ -1,7 +1,7 @@
 import subprocess
 from time import sleep
 
-import settings
+from sourse import settings
 
 
 def main():

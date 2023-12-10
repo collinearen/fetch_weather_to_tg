@@ -2,7 +2,7 @@ import datetime
 
 from sqlalchemy import update
 
-import settings
+from sourse import settings
 from .models import Weather
 from .session import async_session
 

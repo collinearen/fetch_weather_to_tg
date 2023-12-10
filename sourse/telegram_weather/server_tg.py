@@ -9,7 +9,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Command
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
-import settings
+from sourse import settings
 from fetch_server.db.engine import create_user, find_user, update_town_for_user, update_time_for_user, \
     show_temperature, get_users_for_sending
 
