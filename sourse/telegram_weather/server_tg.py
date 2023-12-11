@@ -21,10 +21,12 @@ class WeatherBot:
                 [
                     KeyboardButton(text='Смоленск'),
                     KeyboardButton(text='Москва'),
+                    KeyboardButton(text='Вашингтон'),
                 ],
                 [
                     KeyboardButton(text='Санкт-Петербург'),
-                    KeyboardButton(text='Пермь'),
+                    KeyboardButton(text='Сафоново'),
+                    KeyboardButton(text='Мурманск'),
                 ],
             ],
             resize_keyboard=True,
@@ -33,13 +35,14 @@ class WeatherBot:
         self.time_keyboard = ReplyKeyboardMarkup(
             keyboard=[
                 [
-                    KeyboardButton(text='00:39'),
-                    KeyboardButton(text='00:38'),
-                    KeyboardButton(text='23:59'),
+                    KeyboardButton(text='08:00'),
+                    KeyboardButton(text='12:00'),
+
                 ],
                 [
-                    KeyboardButton(text='00:00'),
-                    KeyboardButton(text='21:00'),
+                    KeyboardButton(text='16:00'),
+                    KeyboardButton(text='20:00'),
+
                 ],
             ],
             resize_keyboard=True,
