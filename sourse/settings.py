@@ -20,4 +20,5 @@ COORD = {
 
 TOKEN = os.environ.get("TOKEN")
 
-MAIN_PATH = os.environ.get("MAIN_PATH")
+COLLECTOR_PATH = os.environ.get("COLLECTOR_PATH")
+BOT_PATH = os.environ.get("BOT_PATH")

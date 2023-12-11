@@ -8,8 +8,11 @@ def main():
     sleep_time = 3600
 
     try:
+        subprocess.run(['python', settings.BOT_PATH])
+
         while True:
-            subprocess.run(['python', settings.MAIN_PATH])
+            subprocess.run(['python', settings.COLLECTOR_PATH])
+
             sleep(sleep_time)
     except KeyboardInterrupt:
         print("Вы остановили процесс")
