@@ -2,9 +2,9 @@ import asyncio
 
 from sqlalchemy import update, select
 
+from sourse.fetch_server.weather_database.models import Weather
 from .models import User
 from .session import async_session
-from sourse.fetch_server.weather_database.models import Weather
 
 
 async def create_user(user_id: int):
@@ -26,9 +26,9 @@ async def update_user(user_id: int, **kwargs):
         await session.commit()
 
 
-async def all_users():
+async def chunk_users(time_sending):
     async with async_session() as session:
-        stmt = select(User.user_id)
+        stmt = select(User.user_id).filter(User.time_sending == time_sending)
         res = await session.execute(stmt)
         return res.fetchall()
 

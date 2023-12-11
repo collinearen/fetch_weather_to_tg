@@ -10,7 +10,7 @@ from aiogram.dispatcher.filters import Command
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 from sourse import settings
-from users_database.users_dao import update_user, create_user, all_users, show_temperature
+from users_database.users_dao import update_user, create_user, chunk_users, show_temperature
 
 # Настройка бота
 storage = MemoryStorage()
@@ -44,7 +44,7 @@ time_keyboard = ReplyKeyboardMarkup(
             KeyboardButton(text='13:48'),
         ],
         [
-            KeyboardButton(text='14:14'),
+            KeyboardButton(text='14:00'),
             KeyboardButton(text='21:00'),
         ],
     ],
@@ -110,7 +110,7 @@ async def select_time(message: types.Message, state: FSMContext):
 @aiocron.crontab('* * * * *')
 async def send_weather():
     # Cписок id-шников пользователей из базы данных
-    users = await all_users()
+    users = await chunk_users(time_sending="14:00")
     for user in users:
         user_id = user[0]
         sending = await show_temperature(user_id=user_id)
