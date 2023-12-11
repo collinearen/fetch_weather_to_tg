@@ -1,70 +1,51 @@
-from sqlalchemy import insert, update, select
+import asyncio
+
+from sqlalchemy import update, select
+
+from .models import User
+from .session import async_session
+from sourse.fetch_server.weather_database.models import Weather
 
 
-def create_user(user_id: int):
-    with engine.connect() as conn:
-        query = insert(users).values(
-            [
-                {
-                    "user_id": user_id,
-                    "town": "",
-                    "time_sending": "",
-                }
-            ]
-        )
-        conn.execute(query)
-        conn.commit()
-        conn.close()
+async def create_user(user_id: int):
+    async with async_session() as session:
+        stmt = select(User.user_id).filter(User.user_id == user_id)
+        user_exists = await session.scalar(stmt)
+        if user_exists is None:
+            session.add(User(user_id=user_id, town="", time_sending=""))
+            await session.commit()
+            return 0
+        else:
+            return None
 
 
-def update_town_for_user(user_id: int, town: str):
-    with engine.connect() as conn:
-        query = update(users).where(users.c.user_id == user_id).values(
-            {
-                users.c.town: town,
-            }
-        )
-        conn.execute(query)
-        conn.commit()
-        conn.close()
+async def update_user(user_id: int, **kwargs):
+    async with async_session() as session:
+        stmt = update(User).values(kwargs).filter(User.user_id == user_id)
+        await session.execute(stmt)
+        await session.commit()
 
 
-def update_time_for_user(user_id: int, time: str):
-    with engine.connect() as conn:
-        query = update(users).where(users.c.user_id == user_id).values(
-            {
-                users.c.time_sending: time,
-            }
-        )
-        conn.execute(query)
-        conn.commit()
-        conn.close()
+async def all_users():
+    async with async_session() as session:
+        stmt = select(User.user_id)
+        res = await session.execute(stmt)
+        return res.fetchall()
 
 
-def show_temperature(user_id: int):
-    with engine.connect() as conn:
-        query = select(users).where(users.c.user_id == user_id)
-        town_user = conn.execute(query)
-        town = town_user.fetchone()[2]
+async def show_temperature(user_id: int):
+    async with async_session() as session:
+        stmt = select(User.town, Weather.temp).join(Weather, User.town == Weather.town).filter(User.user_id == user_id)
+        result = await session.execute(stmt)
 
-        query = select(weather).where(weather.c.town == town)
-        response = conn.execute(query)
-        temp = response.fetchone()[2]
-        conn.close()
-        return temp, town
+        await session.close()
+        return result.fetchall()[0]
 
 
-def get_users_for_sending():
-    with engine.connect() as conn:
-        query = select(users).where(users.c.time_sending == "15:00")
-        res = conn.execute(query)
-        conn.close()
-    return res.fetchall()
+async def test():
+    tst = asyncio.create_task(all_users())
+    await asyncio.gather(tst)
 
 
-def find_user(user_id: int):
-    with engine.connect() as conn:
-        query = select(users).filter(users.c.user_id == user_id)
-        res = conn.execute(query)
-        conn.close()
-    return res.fetchone()
+if __name__ == '__main__':
+    asyncio.run(test())

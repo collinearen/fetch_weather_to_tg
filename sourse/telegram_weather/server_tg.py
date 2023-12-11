@@ -10,8 +10,7 @@ from aiogram.dispatcher.filters import Command
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 from sourse import settings
-from fetch_server.db.engine import create_user, find_user, update_town_for_user, update_time_for_user, \
-    show_temperature, get_users_for_sending
+from users_database.users_dao import update_user, create_user, all_users, show_temperature
 
 # Настройка бота
 storage = MemoryStorage()
@@ -60,14 +59,12 @@ time_keyboard = ReplyKeyboardMarkup(
 @dp.message_handler(Command('start'))
 async def cmd_start(message: types.Message):
     user_id = message.from_user.id
-
-    if find_user(user_id=user_id) is None:
-        text = 'Вы уже зарегистрированы!'
+    if await create_user(user_id=user_id) is None:
+        text = (f"Добро пожаловать!"
+                f"\nЖмякай на /town")
     else:
-        create_user(user_id=user_id)
-        text = ('Вы успешно зарегистрированы!\n'
-                'Нажми на /town')
-
+        text = ("Вы успешно зарегистрировались!"
+                "\nЖмякайте на /town")
     await message.answer(text)
 
 
@@ -86,8 +83,7 @@ async def select_city(message: types.Message, state: FSMContext):
     town = message.text
     user_id = message.from_user.id
 
-    update_town_for_user(town=town, user_id=user_id)
-
+    await update_user(user_id=user_id, town=town)
     await message.answer(f'Отлично, теперь я знаю, где ты живешь)')
 
     # Запрос на выбор времени
@@ -102,26 +98,25 @@ async def select_city(message: types.Message, state: FSMContext):
 @dp.message_handler(state='time')
 async def select_time(message: types.Message, state: FSMContext):
     # Получение выбранного времени и сохранение его в базе данных
-    time = message.text
+    time_sending = message.text
     user_id = message.from_user.id
-    update_time_for_user(user_id=user_id, time=time)
+    await update_user(user_id=user_id, time_sending=time_sending)
 
     await message.answer(
         f'Ты выбрал свое время.\n'
-        f'Теперь я буду присылать в {time} каждый день какая погода тебя ждет на улице')
+        f'Теперь я буду присылать в {time_sending} каждый день какая погода тебя ждет на улице')
 
 
 @aiocron.crontab('* * * * *')
 async def send_weather():
-    users = get_users_for_sending()  # Получите список пользователей из базы данных
+    # Cписок id-шников пользователей из базы данных
+    users = await all_users()
     for user in users:
-        user_id = user[1]
-        user_sending = show_temperature(
-            user_id=user_id)
-        data = user_sending
-        # Получите данные о погоде для каждого пользователя
-        await bot.send_message(user_id, f"Погода в {data[1]}е сейчас "
-                                        f"{data[0]}℃")
+        user_id = user[0]
+        sending = await show_temperature(user_id=user_id)
+        data = sending
+        await bot.send_message(user_id, f"{data[0]}, погода сейчас "
+                                        f"{data[1]}℃")
 
 
 async def main():
@@ -129,5 +124,4 @@ async def main():
 
 
 if __name__ == '__main__':
-    # t.me/collinearen_bot
     asyncio.run(main())

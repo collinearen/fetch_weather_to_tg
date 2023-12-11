@@ -13,7 +13,7 @@ Base = declarative_base()
 
 class User(Base):
     __tablename__ = "users"
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     user_id: Mapped[int]
     town: Mapped[str]
     time_sending: Mapped[str]
