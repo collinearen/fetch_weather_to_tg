@@ -1,3 +1,5 @@
+# Fetch weather to tg
+
 hello, two servers are implemented here - one is a weather collector using an API, the other provides this weather for a certain place at a certain time
 
 (using a telegram bot and deferred functions in <a href="https://github.com/gawel/aiocron?ysclid=lq24qu7d78798047487">aiocron</a> (to visualize it somehow and be able to view it)
@@ -10,7 +12,7 @@ The engine, sessions and the requests themselves in the database are written **a
 You can also try this code in action by launching it at yourself by adding your token Telegram bot, as well as the access key to the API (or use another API)
 This is just a frame that allows you to work with API, put it in a database and visualize it, pulling it out
 
-<img src="/Users/ya/Desktop/image.png"  width="650" height="800"></img>
+<img src="https://github.com/collinearen/fetch_weather_to_tg/blob/main/img/image.png"  width="450" height="800"></img>
 
 I divided the entire program into 2 parts - Fetch_Server contains all the logic to update the weather in the database,
 Telegram_weather contains all the logic for working with the user, to initialize the tablets you will need to in the ***Init*** folder, launch the Init_models file, which will delete the old tables (if available) and create new ones, as well as fill all available cities (stored in settings) with default values.
@@ -39,9 +41,9 @@ pip install --upgrade pip
 ```shell
 pip install requrements.txt
 ```
-<p align="center"></p>
-You also need to run make up. This file defines one service application named "db". It uses the "postgres:14.1-alpine" container image, which is a PostgreSQL version 14.1 database on a lightweight version of Alpine Linux. The database container will restart automatically when it stops or crashes, thanks to the "restart: always" setting. The "environment" section defines environment variables for configuring the database container. In this case, the ```
-POSTGRES_USER```, ```POSTGRES_PASSWORD```, and ```POSTGRES_DB``` variables are set to define the PostgreSQL username, password, and database name, respectively. Port 5432 of the database container is proxied to port 5432 of the host so that the database can be accessed from external devices. A network named "custom" is also defined, which is used for communication between containers. In this case, the database container will be connected to this network. This file allows you to start the database container **PostgreSQL** data with specified parameters and settings within the application. 
+
+You also need to run make up. This file defines one service application named "db". It uses the "postgres:14.1-alpine" container image, which is a PostgreSQL version 14.1 database on a lightweight version of Alpine Linux. The database container will restart automatically when it stops or crashes, thanks to the "restart: always" setting. The "environment" section defines environment variables for configuring the database container. In this case, the ```POSTGRES_USER```, ```POSTGRES_PASSWORD```, and ```POSTGRES_DB``` variables are set to define the PostgreSQL username, password, and database name, respectively. Port 5432 of the database container is proxied to port 5432 of the host so that the database can be accessed from external devices. A network named "custom" is also defined, which is used for communication between containers. In this case, the database container will be connected to this network. This file allows you to start the database container **PostgreSQL** data with specified parameters and settings within the application. 
+
 ```shell
 make up
 ```
@@ -49,8 +51,7 @@ make up
 <p align="center"></p>
 После этого запустить файл Init.py, чтобы инициализировать таблицы и заполнить weather дефолтными значениями, чтобы в дальнейшем их обновлять.
 
-Создать .env и заполнить своими данными, которые требуются в ```
-settings.py``` 
+Создать .env и заполнить своими данными, которые требуются в ```settings.py``` 
 
 Перейти в папку **fetch_server** запустить ```main.py```(Который запускает ```collector.py``` каждые ***3600*** секунд (ровно один час), так же можно настроить под себя)
 
@@ -74,4 +75,6 @@ python schedule_message.py
 
 
 # Examples of using
-![[Pasted image 20231212131359.png]]
+<img src="https://github.com/collinearen/fetch_weather_to_tg/blob/main/img/examples2.png"  width="450" height="800"></img>
+
+<img src="https://github.com/collinearen/fetch_weather_to_tg/blob/main/img/examples.png"  width="900" height="346"></img>
