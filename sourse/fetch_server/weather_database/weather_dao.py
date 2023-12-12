@@ -24,8 +24,3 @@ async def update_data(town: str, temp: int):
         )
         await session.execute(stmt)
         await session.commit()
-
-
-async def data_fill():
-    for key, values in settings.COORD.items():
-        await insert_data(town=key, temp=0, time_stamp=datetime.datetime.now())
