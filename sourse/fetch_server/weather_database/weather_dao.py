@@ -2,9 +2,8 @@ import datetime
 
 from sqlalchemy import update
 
-from sourse import settings
-from .models import Weather
-from .session import async_session
+from sourse.fetch_server.weather_database.models import Weather
+from sourse.fetch_server.weather_database.session import async_session
 
 
 async def insert_data(town: str, temp: int, time_stamp):
