@@ -6,7 +6,7 @@ from sourse.fetch_server.weather_database.models import Base as Base_weather
 from sourse.fetch_server.weather_database.weather_dao import insert_data
 from sourse.telegram_weather.users_database.models import Base as Base_User
 from sourse.telegram_weather.users_database.session import engine as engine_user
-from weather_database.session import engine as engine_weather
+from sourse.fetch_server.weather_database.session import engine as engine_weather
 
 
 async def init_weather_model():
